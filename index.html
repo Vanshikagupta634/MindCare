@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MindCare Dashboard</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #F5F7FB;
+            color: #1F2937;
+        }
+
+        header {
+            background: #1F2937;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 28px;
+        }
+
+        header p {
+            margin: 6px 0 0;
+            color: #D1D5DB;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: auto;
+            padding: 25px;
+        }
+
+        .welcome {
+            margin-bottom: 25px;
+        }
+
+        .welcome h2 {
+            margin-bottom: 5px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+        }
+
+        .card h3 {
+            margin-top: 0;
+            font-size: 21px;
+        }
+
+        .card p {
+            color: #6B7280;
+            line-height: 1.5;
+        }
+
+        button {
+            border: none;
+            border-radius: 10px;
+            padding: 13px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            background: #4F46E5;
+            color: white;
+        }
+
+        button:hover {
+            background: #4338CA;
+        }
+
+        .game-buttons,
+        .mood-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .mood {
+            background: #16A34A;
+        }
+
+        .mood:hover {
+            background: #15803D;
+        }
+
+        .result {
+            margin-top: 15px;
+            font-weight: bold;
+        }
+
+        /* Reminder Form */
+
+        .reminder-form {
+            margin-top: 20px;
+            padding: 18px;
+            background: #F5F7FB;
+            border-radius: 12px;
+        }
+
+        .reminder-form label {
+            display: block;
+            margin-top: 10px;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .reminder-form input,
+        .reminder-form select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #D1D5DB;
+            border-radius: 8px;
+            font-size: 15px;
+            background: white;
+        }
+
+        .reminder-list {
+            margin-top: 15px;
+        }
+
+        .reminder-item {
+            background: white;
+            border: 1px solid #E5E7EB;
+            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 10px;
+        }
+
+        .reminder-item strong {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .reminder-actions {
+            margin-top: 8px;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .small-button {
+            padding: 8px 12px;
+            font-size: 13px;
+        }
+
+        .done {
+            background: #16A34A;
+        }
+
+        .delete {
+            background: #DC2626;
+        }
+
+        .delete:hover {
+            background: #B91C1C;
+        }
+
+        .empty {
+            color: #6B7280;
+            font-size: 14px;
+        }
+
+        @media (max-width: 700px) {
+
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .container {
+                padding: 15px;
+            }
+
+            header h1 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>🧠 MindCare</h1>
+    <p>Caregiver Dashboard</p>
+</header>
+
+<div class="container">
+
+    <div class="welcome">
+        <h2>Welcome to MindCare 👋</h2>
+        <p>Monitor daily activities, mood and cognitive games.</p>
+    </div>
+
+    <div class="grid">
+
+        <!-- REMINDERS -->
+        <div class="card">
+
+            <h3>🔔 Reminders</h3>
+
+            <p>
+                Manage daily water, medicine and other reminders.
+            </p>
+
+            <button onclick="toggleReminderForm()">
+                ➕ Add Reminder
+            </button>
+
+            <button onclick="showReminder()">
+                View Reminders
+            </button>
+
+            <!-- Add Reminder Form -->
+
+            <div id="reminderForm" class="reminder-form" style="display:none;">
+
+                <label for="reminderTitle">
+                    Reminder Name
+                </label>
+
+                <input
+                    type="text"
+                    id="reminderTitle"
+                    placeholder="Example: Drink Water"
+                >
+
+                <label for="reminderTime">
+                    Time
+                </label>
+
+                <input
+                    type="time"
+                    id="reminderTime"
+                >
+
+                <label for="reminderType">
+                    Type
+                </label>
+
+                <select id="reminderType">
+                    <option value="General">General</option>
+                    <option value="Water">Water</option>
+                    <option value="Medicine">Medicine</option>
+                    <option value="Meal">Meal</option>
+                    <option value="Exercise">Exercise</option>
+                    <option value="Appointment">Appointment</option>
+                </select>
+
+                <br><br>
+
+                <button onclick="addReminder()">
+                    💾 Save Reminder
+                </button>
+
+            </div>
+
+            <div id="reminderResult" class="reminder-list"></div>
+
+        </div>
+
+
+        <!-- MOOD -->
+        <div class="card">
+
+            <h3>😊 Mood Tracker</h3>
+
+            <p>How are you feeling today?</p>
+
+            <div class="mood-buttons">
+
+                <button class="mood" onclick="saveMood('Happy')">
+                    😊 Happy
+                </button>
+
+                <button class="mood" onclick="saveMood('Good')">
+                    🙂 Good
+                </button>
+
+                <button class="mood" onclick="saveMood('Okay')">
+                    😐 Okay
+                </button>
+
+                <button class="mood" onclick="saveMood('Sad')">
+                    😔 Sad
+                </button>
+
+            </div>
+
+            <div id="moodResult" class="result"></div>
+
+        </div>
+
+
+        <!-- BRAIN GAMES -->
+        <div class="card">
+
+            <h3>🧠 Brain Games</h3>
+
+            <p>
+                Play cognitive games designed for memory,
+                attention and reaction.
+            </p>
+
+            <div class="game-buttons">
+
+                <button onclick="openGame('memory.html')">
+                    🧩 Memory
+                </button>
+
+                <button onclick="openGame('attention.html')">
+                    👀 Attention
+                </button>
+
+                <button onclick="openGame('reaction.html')">
+                    ⚡ Reaction
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <!-- PROGRESS -->
+        <div class="card">
+
+            <h3>📈 Progress</h3>
+
+            <p>
+                Check your cognitive game scores and overall progress.
+            </p>
+
+            <button onclick="openGame('results.html')">
+                View Results
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+/* =========================
+   BRAIN GAMES
+========================= */
+
+function openGame(page) {
+
+    window.location.href = "Games/" + page;
+
+}
+
+
+/* =========================
+   MOOD TRACKER
+========================= */
+
+function saveMood(mood) {
+
+    localStorage.setItem(
+        "todayMood",
+        mood
+    );
+
+    document.getElementById(
+        "moodResult"
+    ).innerText =
+        "Today's mood: " + mood + " ✓";
+
+}
+
+
+/* Load today's mood */
+
+function loadMood() {
+
+    const mood =
+        localStorage.getItem("todayMood");
+
+    if (mood) {
+
+        document.getElementById(
+            "moodResult"
+        ).innerText =
+            "Today's mood: " + mood + " ✓";
+
+    }
+
+}
+
+
+/* =========================
+   REMINDERS
+========================= */
+
+let reminders =
+    JSON.parse(
+        localStorage.getItem("mindcareReminders")
+    ) || [];
+
+
+/* Show / hide reminder form */
+
+function toggleReminderForm() {
+
+    const form =
+        document.getElementById("reminderForm");
+
+    if (form.style.display === "none") {
+
+        form.style.display = "block";
+
+    } else {
+
+        form.style.display = "none";
+
+    }
+
+}
+
+
+/* Add new reminder */
+
+function addReminder() {
+
+    const title =
+        document.getElementById(
+            "reminderTitle"
+        ).value.trim();
+
+    const time =
+        document.getElementById(
+            "reminderTime"
+        ).value;
+
+    const type =
+        document.getElementById(
+            "reminderType"
+        ).value;
+
+
+    if (!title || !time) {
+
+        alert(
+            "Please enter reminder name and time."
+        );
+
+        return;
+
+    }
+
+
+    const reminder = {
+
+        id: Date.now(),
+
+        title: title,
+
+        time: time,
+
+        type: type,
+
+        done: false
+
+    };
+
+
+    reminders.push(reminder);
+
+
+    localStorage.setItem(
+        "mindcareReminders",
+        JSON.stringify(reminders)
+    );
+
+
+    document.getElementById(
+        "reminderTitle"
+    ).value = "";
+
+    document.getElementById(
+        "reminderTime"
+    ).value = "";
+
+
+    document.getElementById(
+        "reminderForm"
+    ).style.display = "none";
+
+
+    displayReminders();
+
+}
+
+
+/* Display reminders */
+
+function displayReminders() {
+
+    const result =
+        document.getElementById(
+            "reminderResult"
+        );
+
+
+    if (reminders.length === 0) {
+
+        result.innerHTML =
+            '<div class="empty">No reminders added yet.</div>';
+
+        return;
+
+    }
+
+
+    result.innerHTML = "";
+
+
+    reminders.forEach(
+        function(reminder, index) {
+
+            const status =
+                reminder.done
+                ? "✅ Done"
+                : "⏳ Pending";
+
+
+            const item =
+                document.createElement("div");
+
+            item.className =
+                "reminder-item";
+
+
+            item.innerHTML =
+
+                "<strong>" +
+                "🔔 " +
+                reminder.title +
+                "</strong>" +
+
+                "⏰ " +
+                formatTime(reminder.time) +
+                "<br>" +
+
+                "📌 Type: " +
+                reminder.type +
+                "<br>" +
+
+                status +
+
+                '<div class="reminder-actions">' +
+
+                '<button class="small-button done" ' +
+                'onclick="toggleDone(' +
+                index +
+                ')">' +
+
+                (
+                    reminder.done
+                    ? "↩ Undo"
+                    : "✓ Done"
+                ) +
+
+                "</button>" +
+
+                '<button class="small-button delete" ' +
+                'onclick="deleteReminder(' +
+                index +
+                ')">' +
+
+                "🗑 Delete" +
+
+                "</button>" +
+
+                "</div>";
+
+
+            result.appendChild(item);
+
+        }
+    );
+
+}
+
+
+/* View reminders */
+
+function showReminder() {
+
+    displayReminders();
+
+}
+
+
+/* Mark Done / Undo */
+
+function toggleDone(index) {
+
+    reminders[index].done =
+        !reminders[index].done;
+
+
+    localStorage.setItem(
+        "mindcareReminders",
+        JSON.stringify(reminders)
+    );
+
+
+    displayReminders();
+
+}
+
+
+/* Delete reminder */
+
+function deleteReminder(index) {
+
+    if (
+        confirm(
+            "Delete this reminder?"
+        )
+    ) {
+
+        reminders.splice(
+            index,
+            1
+        );
+
+
+        localStorage.setItem(
+            "mindcareReminders",
+            JSON.stringify(reminders)
+        );
+
+
+        displayReminders();
+
+    }
+
+}
+
+
+/* Convert time */
+
+function formatTime(time) {
+
+    const parts =
+        time.split(":");
+
+    let hour =
+        parseInt(parts[0]);
+
+    const minute =
+        parts[1];
+
+    const ampm =
+        hour >= 12
+        ? "PM"
+        : "AM";
+
+
+    hour =
+        hour % 12 || 12;
+
+
+    return (
+        hour +
+        ":" +
+        minute +
+        " " +
+        ampm
+    );
+
+}
+
+
+/* =========================
+   STARTUP
+========================= */
+
+loadMood();
+
+displayReminders();
+
+</script>
+
+</body>
+</html>
